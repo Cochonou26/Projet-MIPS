@@ -31,8 +31,8 @@ int getOpCode(char* fileName, char* instructionList, char* opCodeBin, char* opCo
     else {
         strcpy(opCodeBin, "Error");
     }
-    free(fr1);
-    free(fr2);
+    fclose(fr1);
+    fclose(fr2);
     return filePointer;
 }
 
@@ -42,11 +42,14 @@ int translateCommand(char* fileName, char* opCodeStr, int opCodeDec, int filePoi
     char register1[20];
     char register2[20];
     char value[20];
-    fr1=fopen(fileName,"r");
 
+    printf("On entre \n");
+    printf("On entre dans : %s \n", fileName);
+    fr1=fopen(fileName,"r");
     /*
         Gestion des erreurs
     */
+    printf("On sors de : %s \n", fileName);
     if(fr1 == NULL) {
         perror("Probleme ouverture fichier");
         exit(1);
@@ -155,20 +158,59 @@ int translateCommand(char* fileName, char* opCodeStr, int opCodeDec, int filePoi
             break;
         
     }
-    free(fr1);
+    fclose(fr1);
     return 0;
 }
 
-void readInstruction(char* fileName, char* register, int filePointer){
+
+void readOperation(char* fileName, char* value, char* result){
     FILE* fr1=NULL;
-    char value[20];
-    int compteur=0;
     fr1=fopen(fileName,"r");
 
     if(fr1 == NULL) {
         perror("Probleme ouverture fichier");
         exit(1);
     }
+
+    fscanf(fr1, "%s", result);
+    int stockage=0;
+    if (value[1]=='a' || value[1]=='t' || value[1]=='s'){
+        stockage=(value[2]-48);
+        value[2]='\n';
+    }
+    while(strcmp(value, result) && !feof(fr1)){
+        fscanf(fr1, "%s", result);
+    }
+    if (!feof(fr1)){
+        fscanf(fr1, "%s", result);
+        if (value[1]=='a' || value[1]=='t' || value[1]=='s'){
+            result[2]+=stockage;
+        }
+        printf("Registe : %s", result);
+    }
+    else {
+        printf("Error, no register found");
+    }
+    fclose(fr1);
+}
+
+
+void readInstruction(char* fileName,  int filePointer){
+    FILE* fr1=NULL;
+    char value[20];
+    char result[20];
+    int compteur=0;
+    printf("On entre");
+    printf("fileName : %s", fileName);
+    fr1=fopen(fileName,"r");
+
+    printf("On sort");
+    if(fr1==NULL) {
+        perror("Probleme ouverture fichier");
+        exit(1);
+    }
+    printf("On sort");
+    printf("Value : ");
 
     fseek(fr1,filePointer,SEEK_SET);
     fscanf(fr1, "%s", value);
@@ -180,9 +222,7 @@ void readInstruction(char* fileName, char* register, int filePointer){
         value[compteur]='\0';
     }
     compteur=0;
-    
-
-
+    printf("Value : %s", value);
+    readOperation("./tests/registers.txt", value, result);
+    fclose(fr1);
 }
-
-

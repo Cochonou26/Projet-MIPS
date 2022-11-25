@@ -18,12 +18,15 @@ int main(int argc, char **argv)
       int opCodeDec=0;
       int compteur=0;
       int filePointer=0;
-      while (compteur<5){
-         filePointer=getOpCode("./tests/arithmetic.s","./tests/opCodes.txt",opCodeBin, opCodeStr);
-         opCodeDec=binaireToDecimal(opCodeBin);
-         translateCommand("./tests/arithmetic.s", opCodeStr, opCodeDec, filePointer);
-         compteur++;
-      }
+     
+      filePointer=getOpCode("./tests/arithmetic.s","./tests/opCodes.txt",opCodeBin, opCodeStr);
+      opCodeDec=binaireToDecimal(opCodeBin);
+      translateCommand("./tests/arithmetic.s", opCodeStr, opCodeDec, filePointer);
+      printf("On sort");
+      readInstruction("./tests/arithmetic.s", filePointer);
+      compteur++;
+
+      
    }
 
    if (argc==3){
