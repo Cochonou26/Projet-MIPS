@@ -42,14 +42,12 @@ int main(int argc, char **argv)
 
       strcat(programme, argv[1]);
       nbLignes=getInstructions(programme, instructionsList);
-      printf("%d\n", nbLignes);
       while(compteur<nbLignes && instructionsList[compteur][0]!='\0'){
          getOpCode(compteur,instructionsList, opCodeBin, opCodeStr);
          opCodeDec=binaireToDecimal(opCodeBin);
          translateCommand(opCodeStr, instructionsList ,opCodeDec, compteur, value);
          fprintf(fw1, "%s\n" , value);
          compteur++;
-         printf("valeur : %s\n", instructionsList[compteur]);
       }
 
       fclose(fr);
