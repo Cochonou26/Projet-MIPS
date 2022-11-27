@@ -22,13 +22,9 @@ void getOpCode(int compteur, char instructionsList[1000][100], char* opCodeBin, 
         fscanf(fr1, "%s", opCodeStr);
     }
     if (!feof(fr1)){
-        printf("valeur : %s", opCodeStr);
         fscanf(fr1, "%s",opCodeBin);
-        printf("Code opératoire : %s\n", opCodeBin);
-        printf("%s\n",opCodeStr);
     }
     else {
-        printf("%s\n", value);
         strcpy(opCodeBin, "Error");
     }
     fclose(fr1);
@@ -47,7 +43,6 @@ int getInstructions(char* fileName, char instructionsList[1000][100]){
     
     while (!feof(fr1) && compteur<1000){
         fgets(instructionsList[compteur], 100, fr1);
-        printf("Valeur contenue à la position %d : %s", compteur, instructionsList[compteur]);
         if (instructionsList[compteur][0]!='#' && instructionsList[compteur][0]!='\n'){
             compteur++;
             nbLines++;

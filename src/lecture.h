@@ -2,7 +2,7 @@
 #define _LECTURE
 
 void getOpCode(int compteur, char instructionsList[1000][100], char* opCodeBin, char* opCodeStr);
-int translateCommand(char* opCodeStr, char instructionsList[1000][100], int opCodeDec, int ligne);
+int translateCommand(char* opCodeStr, char instructionsList[1000][100], int opCodeDec, int ligne, char value[100]);
 int binaireToDecimal(char* binaire);
 int bin_to_hexa(char *binaire, char *tab);
 int getInstructions(char* fileName, char instructionsList[1000][100]);

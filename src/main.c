@@ -13,18 +13,6 @@ int main(int argc, char **argv)
 
    if (argc==1){
       printf("Lancement du mode interactif\n");
-      char opCodeStr[100];
-      char opCodeBin[100];
-      char instructionsList[1000][100];
-      int opCodeDec=0;
-      int compteur=0;
-      getInstructions("./tests/arithmetic.s", instructionsList);
-      getOpCode(compteur,instructionsList, opCodeBin, opCodeStr);
-      opCodeDec=binaireToDecimal(opCodeBin);
-      translateCommand(opCodeStr, instructionsList ,opCodeDec, compteur);
-      compteur++;
-
-      
    }
 
    if (argc==3){
@@ -42,6 +30,28 @@ int main(int argc, char **argv)
       fr=fopen(argv[1], "r");
       fw1=fopen(argv[2], "w");
       fw2=fopen(argv[3], "w");
+
+      char programme[100]="./tests/";
+      char opCodeStr[100];
+      char opCodeBin[100];
+      char value[100];
+      char instructionsList[1000][100];
+      int opCodeDec=0;
+      int compteur=0;
+      int nbLignes=0;
+
+      strcat(programme, argv[1]);
+      nbLignes=getInstructions(programme, instructionsList);
+      printf("%d\n", nbLignes);
+      while(compteur<nbLignes && instructionsList[compteur][0]!='\0'){
+         getOpCode(compteur,instructionsList, opCodeBin, opCodeStr);
+         opCodeDec=binaireToDecimal(opCodeBin);
+         translateCommand(opCodeStr, instructionsList ,opCodeDec, compteur, value);
+         fprintf(fw1, "%s\n" , value);
+         compteur++;
+         printf("valeur : %s\n", instructionsList[compteur]);
+      }
+
       fclose(fr);
       fclose(fw1);
       fclose(fw2);
