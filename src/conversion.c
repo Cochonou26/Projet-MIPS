@@ -74,7 +74,7 @@ int bin_to_hexa(char *binaire, char *tab){
 int binaireToDecimal(char* binaire){
   int decimal=0;
   int compteur=0;
-  int puissance=0;
+  int puissance=1;
   if (!strcmp(binaire, "Error") || !strcmp(binaire, "")) {
         perror("OpCode non existant");
         decimal=-1;
@@ -85,9 +85,9 @@ int binaireToDecimal(char* binaire){
   }
   compteur--;
   while (compteur>=0){
-    decimal+=(binaire[compteur]-48)*pow(2,puissance);
+    decimal+=(binaire[compteur]-48)*puissance;
     compteur--;
-    puissance++;
+    puissance*=2;
   }
   return decimal;
 }
@@ -117,15 +117,15 @@ void decToBin(int dec, char* binaire){
 int strToDec (char* chaine){
   int resultat=0;
   int compteur=0;
-  int puissance=0;
+  int puissance=1;
   while (chaine[compteur]!='\0'){
     compteur++;
   }
   compteur--;
   while(compteur>=0){
-    resultat+=(pow(10, puissance)*(chaine[compteur]-48));
+    resultat+=(puissance*(chaine[compteur]-48));
     compteur-=1;
-    puissance++;
+    puissance*=10;
   }
   return resultat;
 }

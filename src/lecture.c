@@ -12,7 +12,7 @@ void getOpCode(int compteur, char instructionsList[1000][100], char* opCodeBin, 
         perror("Probleme ouverture fichier");
         exit(1);
     }
-    while(instructionsList[compteur][compteur2]!=' ' && instructionsList[compteur][compteur2]!='\0'){
+    while(instructionsList[compteur][compteur2]!=' ' && instructionsList[compteur][compteur2]!='\0' && instructionsList[compteur][compteur2]!='\n'){
         value[compteur2]=instructionsList[compteur][compteur2];
         compteur2++;
     }
