@@ -15,15 +15,16 @@ int main(int argc, char **argv)
       printf("Lancement du mode interactif\n");
       char opCodeStr[100];
       char opCodeBin[100];
+      char instructionsList[1000][100];
       int opCodeDec=0;
+      int nbLines=0;
       int compteur=0;
-      int filePointer=0;
-     
-      filePointer=getOpCode("./tests/arithmetic.s","./tests/opCodes.txt",opCodeBin, opCodeStr);
+      decToBin(2, opCodeStr);
+      printf("test main %s\n", opCodeStr);
+      getInstructions("./tests/arithmetic.s", instructionsList);
+      getOpCode(compteur,instructionsList, opCodeBin, opCodeStr);
       opCodeDec=binaireToDecimal(opCodeBin);
-      translateCommand("./tests/arithmetic.s", opCodeStr, opCodeDec, filePointer);
-      printf("On sort");
-      readInstruction("./tests/arithmetic.s", filePointer);
+      translateCommand(opCodeStr, instructionsList ,opCodeDec, compteur);
       compteur++;
 
       

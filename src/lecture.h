@@ -1,11 +1,14 @@
 #ifndef _LECTURE
 #define _LECTURE
 
-int getOpCode(char* fileName, char* instructionList, char* opCodeBin, char* opCodeStr);
-int translateCommand(char* fileName, char* OpCodeStr, int opCodeDec, int filePointer);
+void getOpCode(int compteur, char instructionsList[1000][100], char* opCodeBin, char* opCodeStr);
+int translateCommand(char* opCodeStr, char instructionsList[1000][100], int opCodeDec, int ligne);
 int binaireToDecimal(char* binaire);
 int bin_to_hexa(int *binaire, char *tab);
-void readInstruction(char* fileName, int filePointer);
-void readOperation(char* fileName, char* value, char* result);
+int getInstructions(char* fileName, char instructionsList[1000][100]);
+int getRegister(char instructionsList[1000][100], int ligne, int colonne, char* value);
+void decToBin(int dec, char* binaire);
+int strToDec (char* chaine);
+void remplirBinaire(char *mot, char *tab, int taille);
 
 #endif

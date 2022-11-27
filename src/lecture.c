@@ -2,72 +2,75 @@
 #include <stdlib.h>
 #include <string.h>
 
-int getOpCode(char* fileName, char* instructionList, char* opCodeBin, char* opCodeStr){
+void getOpCode(int compteur, char instructionsList[1000][100], char* opCodeBin, char* opCodeStr){
     FILE* fr1=NULL;
-    FILE* fr2=NULL;
-    char instruction[100];
-    int filePointer=0;
-    fr1=fopen(fileName,"r");
+    char value[20];
+    int compteur2=0;
+    fr1=fopen("./tests/opCodes.txt","r");
     if(fr1 == NULL) {
         perror("Probleme ouverture fichier");
         exit(1);
     }
-    fr2=fopen(instructionList,"r");
-    if(fr2 == NULL) {
-        perror("Probleme ouverture fichier");
-        exit(1);
+    while(instructionsList[compteur][compteur2]!=' ' && instructionsList[compteur][compteur2]!='\0'){
+        value[compteur2]=instructionsList[compteur][compteur2];
+        compteur2++;
     }
-    fscanf(fr1, "%s", instruction);
-    fscanf(fr2, "%s", opCodeStr);
-    while (strcmp(instruction,opCodeStr)!=0 && !feof(fr2)){
-        fscanf(fr2, "%s", opCodeStr);
+    value[compteur2]='\0';
+    fscanf(fr1, "%s", opCodeStr);
+    while (strcmp(value,opCodeStr) && !feof(fr1)){
+        fscanf(fr1, "%s", opCodeStr);
     }
-    if (!feof(fr2)){
-        fscanf(fr2, "%s",opCodeBin);
-        filePointer=ftell(fr1);        
-        printf("Code opératoire de %s : %s\n", instruction, opCodeBin);
+    if (!feof(fr1)){
+        printf("valeur : %s", opCodeStr);
+        fscanf(fr1, "%s",opCodeBin);
+        printf("Code opératoire : %s\n", opCodeBin);
         printf("%s\n",opCodeStr);
     }
     else {
+        printf("%s\n", value);
         strcpy(opCodeBin, "Error");
     }
     fclose(fr1);
-    fclose(fr2);
-    return filePointer;
 }
 
-int translateCommand(char* fileName, char* opCodeStr, int opCodeDec, int filePointer){
-    FILE* fr1=NULL;
-    char instruction[100];
-    char register1[20];
-    char register2[20];
-    char value[20];
-
-    printf("On entre \n");
-    printf("On entre dans : %s \n", fileName);
-    fr1=fopen(fileName,"r");
-    /*
-        Gestion des erreurs
-    */
-    printf("On sors de : %s \n", fileName);
-    if(fr1 == NULL) {
-        perror("Probleme ouverture fichier");
-        exit(1);
-    }
+int translateCommand(char* opCodeStr, char instructionsList[1000][100], int opCodeDec, int ligne){
+    int colonne=0;
+    char value[9]={'0'};
+    char translate[32];
+    char reg1[20];
+    char reg2[20];
+    char reg3[20];
     if (opCodeDec<0) {
         perror("OpCode non existant");
         exit(1);
     }
-    fseek(fr1,filePointer,SEEK_SET);
     switch (opCodeDec) {
 
         case 0:
             printf("SLL or NOP\n");
             if (!strcmp(opCodeStr, "NOP")){
-                printf("NOP\n");
+                opCodeStr="0000000000000000000000000000000";
             }
             else {
-                printf("SLL\n");
+                strcpy(translate,"00000000000");
+                colonne=getRegister(instructionsList, ligne, 4, reg1);
+                colonne=getRegister(instructionsList, ligne, colonne+1, reg2);
+                getRegister(instructionsList, ligne, colonne+1, reg3);;
+                decToBin(strToDec(reg3),reg3);
+                decToBin(strToDec(reg2),reg2);
+                decToBin(strToDec(reg1),reg1);
+                remplirBinaire(reg1, reg1, 5);
+                remplirBinaire(reg2, reg2, 5);
+                remplirBinaire(reg3, reg3, 5);
+                strcat(translate, reg2);
+                strcat(translate, reg1);
+                strcat(translate, reg3);
+                strcat(translate, "000000");
+                printf("Valeur binaire : %s\n", translate);
+                strcpy(value, "00000000");
+                bin_to_hexa(translate, value);
+                printf("Valeur hexa : %s\n", value);
+
             }
             break;
 
@@ -104,9 +107,27 @@ int translateCommand(char* fileName, char* opCodeStr, int opCodeDec, int filePoi
 
 
         case 8:
-            printf("JR or ADDI\n"); 
             if (!strcmp(opCodeStr, "ADDI")){
                 printf("ADDI\n");
+                strcpy(translate,"001000");
+                colonne=getRegister(instructionsList, ligne, 5, reg1);
+                colonne=getRegister(instructionsList, ligne, colonne+1, reg2);
+                getRegister(instructionsList, ligne, colonne+1, reg3);
+                decToBin(strToDec(reg1),reg1);
+                decToBin(strToDec(reg2),reg2);
+                decToBin(strToDec(reg3),reg3);      
+                remplirBinaire(reg1, reg1, 5);
+                remplirBinaire(reg2, reg2, 5);
+                remplirBinaire(reg3, reg3, 16);
+                strcat(translate, reg2);
+                strcat(translate, reg1);
+                strcat(translate, reg3);
+                strcpy(value, "00000000");
+                bin_to_hexa(translate, value);
+                printf("%s\n", value);
+
+
+
             }
             else {
                 printf("JR\n");
@@ -158,71 +179,48 @@ int translateCommand(char* fileName, char* opCodeStr, int opCodeDec, int filePoi
             break;
         
     }
-    fclose(fr1);
     return 0;
 }
 
-
-void readOperation(char* fileName, char* value, char* result){
+int getInstructions(char* fileName, char instructionsList[1000][100]){
     FILE* fr1=NULL;
+    int nbLines=0;
+    int compteur=0;
     fr1=fopen(fileName,"r");
 
     if(fr1 == NULL) {
         perror("Probleme ouverture fichier");
         exit(1);
-    }
-
-    fscanf(fr1, "%s", result);
-    int stockage=0;
-    if (value[1]=='a' || value[1]=='t' || value[1]=='s'){
-        stockage=(value[2]-48);
-        value[2]='\n';
-    }
-    while(strcmp(value, result) && !feof(fr1)){
-        fscanf(fr1, "%s", result);
-    }
-    if (!feof(fr1)){
-        fscanf(fr1, "%s", result);
-        if (value[1]=='a' || value[1]=='t' || value[1]=='s'){
-            result[2]+=stockage;
+    }   
+    
+    while (!feof(fr1) && compteur<1000){
+        fgets(instructionsList[compteur], 100, fr1);
+        printf("Valeur contenue à la position %d : %s", compteur, instructionsList[compteur]);
+        if (instructionsList[compteur][0]!='#' && instructionsList[compteur][0]!='\n'){
+            compteur++;
+            nbLines++;
         }
-        printf("Registe : %s", result);
-    }
-    else {
-        printf("Error, no register found");
+        else {
+            instructionsList[compteur][0]='\0';
+        }
     }
     fclose(fr1);
+    return nbLines;
 }
 
-
-void readInstruction(char* fileName,  int filePointer){
-    FILE* fr1=NULL;
-    char value[20];
-    char result[20];
+int getRegister(char instructionsList[1000][100], int ligne, int colonne, char* value){
     int compteur=0;
-    printf("On entre");
-    printf("fileName : %s", fileName);
-    fr1=fopen(fileName,"r");
+    while (instructionsList[ligne][colonne]!=',' && instructionsList[ligne][colonne]!='\0' && instructionsList[ligne][colonne]!='\n'){
+        value[compteur]=instructionsList[ligne][colonne];
+        if (value[compteur]!='$' && value [compteur]!=' '){
+            colonne++;
+            compteur++;
+        }
+        else {
+            colonne++;
+        }
 
-    printf("On sort");
-    if(fr1==NULL) {
-        perror("Probleme ouverture fichier");
-        exit(1);
     }
-    printf("On sort");
-    printf("Value : ");
-
-    fseek(fr1,filePointer,SEEK_SET);
-    fscanf(fr1, "%s", value);
-    while(value[compteur]!='\n'){
-        compteur++;
-    }
-    compteur--;
-    if (value[compteur]==','){
-        value[compteur]='\0';
-    }
-    compteur=0;
-    printf("Value : %s", value);
-    readOperation("./tests/registers.txt", value, result);
-    fclose(fr1);
+    value[compteur]='\0';
+    return colonne;
 }

@@ -3,23 +3,18 @@
 #include <math.h>
 #include <string.h>
 
-int bin_to_hexa(int *binaire, char *tab){
+int bin_to_hexa(char *binaire, char *tab){
   int coef[8]={0};
-  coef[7] = 1*binaire[31]+2*binaire[30]+4*binaire[29]+8*binaire[28];
-  coef[6] = 1*binaire[27]+2*binaire[26]+4*binaire[25]+8*binaire[24];
-  coef[5] = 1*binaire[23]+2*binaire[22]+4*binaire[21]+8*binaire[20];
-  coef[4] = 1*binaire[19]+2*binaire[18]+4*binaire[17]+8*binaire[16];
-  coef[3] = 1*binaire[15]+2*binaire[14]+4*binaire[13]+8*binaire[12];
-  coef[2] = 1*binaire[11]+2*binaire[10]+4*binaire[9]+8*binaire[8];
-  coef[1] = 1*binaire[7]+2*binaire[6]+4*binaire[5]+8*binaire[4];
-  coef[0] = 1*binaire[3]+2*binaire[2]+4*binaire[1]+8*binaire[0];
+  int Ascii=48;
+  coef[7] = 1*(binaire[31]-Ascii)+2*(binaire[30]-Ascii)+4*(binaire[29]-Ascii)+8*(binaire[28]-Ascii);
+  coef[6] = 1*(binaire[27]-Ascii)+2*(binaire[26]-Ascii)+4*(binaire[25]-Ascii)+8*(binaire[24]-Ascii);
+  coef[5] = 1*(binaire[23]-Ascii)+2*(binaire[22]-Ascii)+4*(binaire[21]-Ascii)+8*(binaire[20]-Ascii);
+  coef[4] = 1*(binaire[19]-Ascii)+2*(binaire[18]-Ascii)+4*(binaire[17]-Ascii)+8*(binaire[16]-Ascii);
+  coef[3] = 1*(binaire[15]-Ascii)+2*(binaire[14]-Ascii)+4*(binaire[13]-Ascii)+8*(binaire[12]-Ascii);
+  coef[2] = 1*(binaire[11]-Ascii)+2*(binaire[10]-Ascii)+4*(binaire[9]-Ascii)+8*(binaire[8]-Ascii);
+  coef[1] = 1*(binaire[7]-Ascii)+2*(binaire[6]-Ascii)+4*(binaire[5]-Ascii)+8*(binaire[4]-Ascii);
+  coef[0] = 1*(binaire[3]-Ascii)+2*(binaire[2]-Ascii)+4*(binaire[1]-Ascii)+8*(binaire[0]-Ascii);
 
-/*
-  for (int j=0; j<=7; j++){
-    printf("%d ",coef[j]);
-  }
-  printf("\n");
-*/
 
   for (int i=0; i<=7; i++){
 
@@ -71,6 +66,7 @@ int bin_to_hexa(int *binaire, char *tab){
     else if (coef[i]==15){
       tab[i]='f';
     }
+    
   }
   return 0;
 }
@@ -94,4 +90,62 @@ int binaireToDecimal(char* binaire){
     puissance++;
   }
   return decimal;
+}
+
+void decToBin(int dec, char* binaire){
+  int puissance=1;
+  int compteur=0;
+  while(puissance<dec){
+    puissance*=2;
+  }
+  while(puissance>=1){
+    if ((dec/puissance)<1){
+      binaire[compteur]='0';
+      puissance/=2;
+      compteur++;
+    }
+    else {
+      dec-=puissance;
+      binaire[compteur]='1';
+      puissance/=2;
+      compteur++;
+    }
+  }
+  binaire[compteur]='\0';
+}
+
+int strToDec (char* chaine){
+  int resultat=0;
+  int compteur=0;
+  int puissance=0;
+  while (chaine[compteur]!='\0'){
+    compteur++;
+  }
+  compteur--;
+  while(compteur>=0){
+    resultat+=(pow(10, puissance)*(chaine[compteur]-48));
+    compteur-=1;
+    puissance++;
+  }
+  return resultat;
+}
+
+
+void remplirBinaire(char *mot, char *tab, int taille){
+  int compteur =0;
+  tab[taille]='\0';
+  taille--;
+  while (mot[compteur] != '\0'){
+    compteur ++;
+  }
+  compteur --;
+  while (compteur >=0){
+    tab[taille] = mot[compteur];
+    taille --;
+    compteur --;
+  }
+  while(taille>=0){
+    tab[taille]='0';
+    taille--;
+  }
 }
