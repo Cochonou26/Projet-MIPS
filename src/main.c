@@ -17,10 +17,7 @@ int main(int argc, char **argv)
       char opCodeBin[100];
       char instructionsList[1000][100];
       int opCodeDec=0;
-      int nbLines=0;
       int compteur=0;
-      decToBin(2, opCodeStr);
-      printf("test main %s\n", opCodeStr);
       getInstructions("./tests/arithmetic.s", instructionsList);
       getOpCode(compteur,instructionsList, opCodeBin, opCodeStr);
       opCodeDec=binaireToDecimal(opCodeBin);
